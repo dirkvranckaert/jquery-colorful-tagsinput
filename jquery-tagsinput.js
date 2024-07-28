@@ -61,9 +61,11 @@
         const whiteContrast = contrast([rgbColor.r, rgbColor.g, rgbColor.b], [255, 255, 255]);
         const blackContrast = contrast([rgbColor.r, rgbColor.g, rgbColor.b], [0, 0, 0]);
         var constastColor = "rgb(0, 0, 0)";
-        if (whiteContrast > blackContrast) {
+
+        if (parseInt(blackContrast, 10) <= parseInt(whiteContrast, 10)) {
             constastColor = "rgb(255, 255, 255)";
         }
+
         return constastColor;
     }
 
@@ -277,8 +279,6 @@
         const startPositionTop = elementPosition.top + clickElementHeight + startPositionOffset;
         
         const colorPickerPopup = $('<div/>');
-        colorPickerPopup.css("left",startPositionLeft);
-        colorPickerPopup.css("top",startPositionTop);
 
 
         for (let i = 0; i < e.prototype.colorPalette.length; i++) {
@@ -296,16 +296,12 @@
                 if (hexColor == tagColor) {
                     colorSelectionItem.html("&check;");
                     colorSelectionItem.css("cursor", "not-allowed");
+                    colorSelectionItem.css("padding-top", "5px");
 
                     const rgbColor = hexToRgb(hexColor);
 
-                    const whiteContrast = contrast([rgbColor.r, rgbColor.g, rgbColor.b], [255, 255, 255]);
-                    const blackContrast = contrast([rgbColor.r, rgbColor.g, rgbColor.b], [0, 0, 0]);
-                    if (whiteContrast > blackContrast) {
-                        colorSelectionItem.css("color", "rgb(255, 255, 255)");
-                    } else {
-                        colorSelectionItem.css("color", "rgb(0, 0, 0)");
-                    }
+                    const contrastColor = blackOrWhiteContrast(hexColor);
+                    colorSelectionItem.css("color", contrastColor);
                 } else {
                     colorSelectionItem.click(e.prototype.colorPickerColorSelected);
                 }
@@ -321,8 +317,11 @@
         colorPickerPopup.attr('class', 'tags-input-color-picker');
         colorPickerPopup.attr('data-tagcolor',  tagColor);
         colorPickerPopup.attr('data-tagvalue',  tagValue);
+        colorPickerPopup.css("left",startPositionLeft);
+        colorPickerPopup.css("top",startPositionTop + 15);
         colorPickerPopup.appendTo('body');
 
+        // t(this).parent().parent().after($("<div/>").append(colorPickerPopup).html());
 
         /*activeColorPicker = Color(i[0].parent, {
             onchange: function (s, color) {
