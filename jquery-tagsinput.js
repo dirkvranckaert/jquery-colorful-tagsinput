@@ -1,74 +1,6 @@
 !function (t) {
     "use strict";
 
-    function rgbToHex(rgb) {
-      var parts = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-      delete(parts[0]);
-      for (var i = 1; i <= 3; ++i) {
-        parts[i] = parseInt(parts[i]).toString(16);
-        if (parts[i].length == 1) parts[i] = '0' + parts[i];
-      }
-      return '#' + parts.join('');
-    }
-
-    // https://stackoverflow.com/a/5624139
-    function hexToRgb(hex) {
-      // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-      var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-      hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-        return r + r + g + g + b + b;
-      });
-
-      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : undefined;
-    }
-
-    // CONTRAST: https://stackoverflow.com/a/9733420
-    const RED = 0.2126;
-    const GREEN = 0.7152;
-    const BLUE = 0.0722;
-
-    const GAMMA = 2.4;
-
-    function luminance(r, g, b) {
-      var a = [r, g, b].map((v) => {
-        v /= 255;
-        return v <= 0.03928
-          ? v / 12.92
-          : Math.pow((v + 0.055) / 1.055, GAMMA);
-      });
-      return a[0] * RED + a[1] * GREEN + a[2] * BLUE;
-    }
-
-    function contrast(rgb1, rgb2) {
-      var lum1 = luminance(...rgb1);
-      var lum2 = luminance(...rgb2);
-      var brightest = Math.max(lum1, lum2);
-      var darkest = Math.min(lum1, lum2);
-      return (brightest + 0.05) / (darkest + 0.05);
-    }
-
-    function blackOrWhiteContrast(color) {
-        var hexColor = color;
-        if (!hexColor.startsWith('#')) {
-            hexColor = rgbToHex(hexColor);
-        }
-        const rgbColor = hexToRgb(hexColor);
-        const whiteContrast = contrast([rgbColor.r, rgbColor.g, rgbColor.b], [255, 255, 255]);
-        const blackContrast = contrast([rgbColor.r, rgbColor.g, rgbColor.b], [0, 0, 0]);
-        var constastColor = "rgb(0, 0, 0)";
-
-        if (parseInt(blackContrast, 10) <= parseInt(whiteContrast, 10)) {
-            constastColor = "rgb(255, 255, 255)";
-        }
-
-        return constastColor;
-    }
-
     const _tags_input_color_palette = [
         ["rgb(204, 51, 139)", "rgb(220, 20, 60)", "rgb(194, 30, 86)", "rgb(205, 91, 69)", "rgb(237, 145, 33)", "rgb(238, 230, 0)", "rgb(0, 153, 102)"],
         ["rgb(143, 188, 143)", "rgb(102, 153, 204)", "rgb(230, 230, 250)", "rgb(148, 0, 211)", "rgb(51, 0, 102)", "rgb(54, 69, 79)", "rgb(128, 128, 128)"]
@@ -96,6 +28,11 @@
             e.prototype.colorPalette = i.colorPalette;
         } else {
             e.prototype.colorPalette = _tags_input_color_palette;
+        }
+        if (i.additionalColorPalette) {
+            e.prototype.additionalColors = i.additionalColorPalette
+        } else {
+            e.prototype.additionalColors = []
         }
         if (i.onChange) {
             e.prototype.onChange = i.onChange;
@@ -126,7 +63,7 @@
                     color = i.substring(0, 7);
                     i = i.substring(7);
                 }
-                const textColorValue = blackOrWhiteContrast(color);
+                const textColorValue = _blackOrWhiteContrast(color);
                 i.length > 0 && c.unshift(jQuery(n.replace("{colorValue}", color).replace("{textColorValue}", textColorValue).replace("{value}", i).replace("{tagIndex}", t)));
             });
             const u = t(r);
@@ -162,7 +99,7 @@
                             label = o.substring(7);
                         }
 
-                        const textColorValue = blackOrWhiteContrast(color);
+                        const textColorValue = _blackOrWhiteContrast(color);
                         const e = t(r.replace("{value}", label).replace("{colorValue}", color).replace("{textColorValue}", textColorValue).replace("{tagIndex}", n.siblings("div").length-1));
                         e.insertBefore(n);
                         e.children("i.tag-remove").click(a.removeTag);
@@ -204,7 +141,7 @@
         const tagValue = $(this).parent().parent().attr('data-tagvalue');
         var hexColor = backgroundColor;
         if (!backgroundColor.startsWith("#")) {
-            hexColor = rgbToHex(backgroundColor);
+            hexColor = _rgbToHex(backgroundColor);
         }
 
         const originalTag = `${originalHexColor}${tagValue}`;
@@ -235,7 +172,7 @@
             $(tagElement).css("background-color", hexColor);
 
             // Make sure the text has enough contrast with the background
-            const textColorValue = blackOrWhiteContrast(hexColor);
+            const textColorValue = _blackOrWhiteContrast(hexColor);
             $(tagElement).css("color", textColorValue);
 
             // Propagate the change to the onChange-callback
@@ -243,7 +180,7 @@
                 e.prototype.onChange(form.val());
             }
         }
-        
+
         e.prototype.closeColorPicker();
     }
     e.prototype.closeColorPicker = function () {
@@ -260,7 +197,7 @@
         var tagColor = t(this).parent().css("background-color");
         if (!tagColor.startsWith("#")) {
             // Convert from RGB to HEX
-            tagColor = rgbToHex(tagColor);
+            tagColor = _rgbToHex(tagColor);
         }
 
         var activeColorPicker = e.prototype.closeColorPicker();
@@ -277,7 +214,7 @@
         const startPositionOffset = 0;
         const startPositionLeft = elementPosition.left + (clickElementWidth/2);
         const startPositionTop = elementPosition.top + clickElementHeight + startPositionOffset;
-        
+
         const colorPickerPopup = $('<div/>');
 
 
@@ -291,16 +228,16 @@
                 const colorSelectionItem = $('<span/>');
                 var hexColor = color;
                 if (!hexColor.startsWith("#")) {
-                    hexColor = rgbToHex(hexColor);
+                    hexColor = _rgbToHex(hexColor);
                 }
                 if (hexColor == tagColor) {
                     colorSelectionItem.html("&check;");
                     colorSelectionItem.css("cursor", "not-allowed");
                     colorSelectionItem.css("padding-top", "5px");
 
-                    const rgbColor = hexToRgb(hexColor);
+                    const rgbColor = _hexToRgb(hexColor);
 
-                    const contrastColor = blackOrWhiteContrast(hexColor);
+                    const contrastColor = _blackOrWhiteContrast(hexColor);
                     colorSelectionItem.css("color", contrastColor);
                 } else {
                     colorSelectionItem.click(e.prototype.colorPickerColorSelected);
@@ -311,6 +248,42 @@
 
                 colorLineDiv.append(colorSelectionItem);
             }
+            colorPickerPopup.append(colorLineDiv);
+        }
+
+        for (let i = 0; i < e.prototype.additionalColors.length; i++) {
+            const color_line = e.prototype.additionalColors[i];
+            const colorLineDiv = $('<div/>');
+            colorLineDiv.attr('class', 'color-line');
+
+            for (let j = 0; j < color_line.length; j++) {
+                const color = color_line[j].color;
+                const label = color_line[j].label;
+                const colorSelectionItem = $('<span/>');
+                var hexColor = color;
+                if (!hexColor.startsWith("#")) {
+                    hexColor = _rgbToHex(hexColor);
+                }
+                if (hexColor == tagColor) {
+                    colorSelectionItem.html("&check;");
+                    colorSelectionItem.css("cursor", "not-allowed");
+                    colorSelectionItem.css("padding-top", "5px");
+
+                    const rgbColor = _hexToRgb(hexColor);
+
+                    const contrastColor = _blackOrWhiteContrast(hexColor);
+                    colorSelectionItem.css("color", contrastColor);
+                } else {
+                    colorSelectionItem.click(e.prototype.colorPickerColorSelected);
+                }
+                colorSelectionItem.attr("align", "center");
+                colorSelectionItem.attr('class', 'color-item');
+                colorSelectionItem.css("background-color",`${color}`);
+                colorSelectionItem.attr("title", label);
+
+                colorLineDiv.append(colorSelectionItem);
+            }
+
             colorPickerPopup.append(colorLineDiv);
         }
 
@@ -345,3 +318,87 @@
         })
     };
 }(jQuery);
+
+function _rgbToHex(rgb) {
+    var parts = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    delete(parts[0]);
+    for (var i = 1; i <= 3; ++i) {
+        parts[i] = parseInt(parts[i]).toString(16);
+        if (parts[i].length == 1) parts[i] = '0' + parts[i];
+    }
+    return '#' + parts.join('');
+}
+
+// https://stackoverflow.com/a/5624139
+function _hexToRgb(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : undefined;
+}
+
+// CONTRAST: https://stackoverflow.com/a/9733420
+const RED = 0.2126;
+const GREEN = 0.7152;
+const BLUE = 0.0722;
+
+const GAMMA = 2.4;
+
+function _luminance(r, g, b) {
+    var a = [r, g, b].map((v) => {
+        v /= 255;
+        return v <= 0.03928
+            ? v / 12.92
+            : Math.pow((v + 0.055) / 1.055, GAMMA);
+    });
+    return a[0] * RED + a[1] * GREEN + a[2] * BLUE;
+}
+
+function _contrast(rgb1, rgb2) {
+    var lum1 = _luminance(...rgb1);
+    var lum2 = _luminance(...rgb2);
+    var brightest = Math.max(lum1, lum2);
+    var darkest = Math.min(lum1, lum2);
+    return (brightest + 0.05) / (darkest + 0.05);
+}
+
+function _blackOrWhiteContrast(color) {
+    var hexColor = color;
+    if (!hexColor.startsWith('#')) {
+        hexColor = _rgbToHex(hexColor);
+    }
+    const rgbColor = _hexToRgb(hexColor);
+    const whiteContrast = _contrast([rgbColor.r, rgbColor.g, rgbColor.b], [255, 255, 255]);
+    const blackContrast = _contrast([rgbColor.r, rgbColor.g, rgbColor.b], [0, 0, 0]);
+    var constastColor = "rgb(0, 0, 0)";
+
+    const blackContrastInt = parseInt(blackContrast, 10);
+    const whiteContrastInt = parseInt(whiteContrast, 10);
+    if (whiteContrastInt >= 2) {
+        constastColor = "rgb(255, 255, 255)";
+    }
+
+    return constastColor;
+}
+
+function renderColorfullBootstrapTag(tagConfig) {
+    if (tagConfig.startsWith("#")) {
+        color = tagConfig.substring(0, 7);
+        tag = tagConfig.substring(7);
+        textColor = _blackOrWhiteContrast(color);
+    } else {
+        color = "#36454f"
+        textColor = _blackOrWhiteContrast(color);
+        tag = tagConfig;
+
+    }
+    return `<span class="badge badge-secondary" style="background-color: ${color}; color: ${textColor};">${tag}</span>`;
+}
