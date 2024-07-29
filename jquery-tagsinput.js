@@ -82,7 +82,7 @@
         const r = o(this[0].hasAttribute("disabled"), i.allowColorChange == undefined ? true : i.allowColorChange);
         t(".tags-container").not("disabled").children("input").keydown(function (e) {
             a.closeColorPicker();
-            if ("Enter" === e.key || ";" === e.key) {
+            if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
                 e.preventDefault();
                 const n = t(e.currentTarget);
                 let o = n.val().trim();
