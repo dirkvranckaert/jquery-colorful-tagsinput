@@ -18,6 +18,22 @@
 	width: auto
 }
 
+.tags-input-suggestion-dropdown {
+	min-height: 20px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+  	border-radius: 0px;
+    border: 2px solid;
+    border-color: #000000;
+	background-color: #000000;
+    padding: 0px;
+	z-index: 1;
+	-webkit-animation: tagsInputFadeIn 500ms;
+	animation: tagsInputFadeIn 500ms;
+}
+
 .tags-input-color-picker {
     position: absolute;
     display: flex;

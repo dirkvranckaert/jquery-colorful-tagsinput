@@ -33,6 +33,10 @@
 			<input type="text" class="form-control" id="fixed-colors-tags" value="#dc143cColor change;#000000not allowed;"></input>
 		</div>
 
+		<div class="row" style="margin-bottom: 6px; margin-top: 6px;">
+			<input style="width: 200px;" type="text" class="form-control" id="autocomplete-colors-tags" value="#dc143cOption 1;#000000Option 2;"></input>
+		</div>
+
 		<div class="row">
 			<span>Usage is really simple! Just add an 'input' field to your UI next apply in JavaScript the 'tagsInput' plugin. You can use whatever JQuery selector to select to which input field to apply the tags!</span>
 			<pre><code>
@@ -69,6 +73,7 @@
     	var fixedColorsTagsInput = $('#fixed-colors-tags').tagsInput({
     		allowColorChange: false,
     	});
+    	var fixedColorsTagsInput = $('#autocomplete-colors-tags').tagsInput();
     	var tagsInput = $('#tags').tagsInput({
 			onChange: function(e) {
 				console.log(`Tags input changed to ${e}`);

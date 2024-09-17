@@ -80,10 +80,26 @@
             a.resetSize(this)
         });
         const r = o(this[0].hasAttribute("disabled"), i.allowColorChange == undefined ? true : i.allowColorChange);
+        t(".tags-container").not("disabled").children("input").keyup(function (e) {
+            if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
+                return;
+            } else {
+                let newInput = e.key;
+                const n = t(e.currentTarget);
+                let o = n.val().trim();
+                if (o) {
+                    let inputValue = a.sanitizeText(o);
+                    let tagsInputElement = e.currentTarget.parentElement;
+                    a.hideSuggestions();
+                    a.showSuggestions(inputValue, tagsInputElement);
+                }
+            }
+        });
         t(".tags-container").not("disabled").children("input").keydown(function (e) {
             a.closeColorPicker();
             if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
                 e.preventDefault();
+                a.hideSuggestions();
                 const n = t(e.currentTarget);
                 let o = n.val().trim();
                 if (o) {
@@ -182,6 +198,40 @@
         }
 
         e.prototype.closeColorPicker();
+    }
+    e.prototype.showSuggestions = function(filterString, inputElement) {
+        console.log(`Build suggestions for ${filterString}`);
+
+        const offsetLeft = inputElement.offsetLeft;
+        const offsetTop = inputElement.offsetTop;
+        const offsetWidth = inputElement.offsetWidth;
+        const offsetHeight = inputElement.offsetHeight;
+
+        let dropdownWidth = 200; // TODO make this configurable?
+        if (offsetWidth < dropdownWidth) {
+            // Make sure we don't go bigger than the 'parent'
+            dropdownWidth = offsetWidth;
+        }
+
+        console.log("debug");
+
+        const suggestionDropdown = $('<div/>');
+        suggestionDropdown.append("<span>TEST</span>");
+
+        suggestionDropdown.attr('class', 'tags-input-suggestion-dropdown');
+        suggestionDropdown.css("left",offsetLeft);
+        suggestionDropdown.css("top",offsetTop + offsetHeight);
+        suggestionDropdown.css("width",dropdownWidth);
+        suggestionDropdown.appendTo('body');
+
+        // TODO dropdown to be shown...
+    }
+    e.prototype.hideSuggestions = function () {
+        var activeSuggestions = $(".tags-input-suggestion-dropdown")
+        if (activeSuggestions) {
+            activeSuggestions.first().remove();
+        }
+        return activeSuggestions;
     }
     e.prototype.closeColorPicker = function () {
         var activeColorPicker = $(".tags-input-color-picker")
