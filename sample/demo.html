@@ -75,6 +75,7 @@
     	});
     	var fixedColorsTagsInput = $('#autocomplete-colors-tags').tagsInput();
     	var tagsInput = $('#tags').tagsInput({
+    		hints: ["TEST12", "BLA456", "#FF8899Colorfull"],
 			onChange: function(e) {
 				console.log(`Tags input changed to ${e}`);
 			}

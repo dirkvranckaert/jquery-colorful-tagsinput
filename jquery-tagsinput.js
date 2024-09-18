@@ -41,6 +41,11 @@
         if (i.onChange) {
             e.prototype.onChange = i.onChange;
         }
+        if (i.hints) {
+            e.prototype.hints = i.hints;
+        } else {
+            e.prototype.hints = [0];
+        } 
         if (i.defaultLabelColor) {
             e.prototype.defaultLabelColor = i.defaultLabelColor;
         } else {
@@ -88,6 +93,17 @@
         const r = o(this[0].hasAttribute("disabled"), i.allowColorChange == undefined ? true : i.allowColorChange);
         e.prototype.tagRenderer = r;
         e.prototype.simpleTagRenderer = f();
+        /*t(".tags-container").not("disabled").children("input").focus(function (e) {
+            e.preventDefault();
+            var activeSuggestions = $(".tags-input-suggestion-dropdown")
+            if (!activeSuggestions || activeSuggestions.length == 0) {
+                let tagsInputElement = e.currentTarget.parentElement;
+                const n = t(e.currentTarget);
+                let o = n.val().trim();
+                a.hideSuggestions();
+                a.showSuggestions(o, tagsInputElement);
+            }
+        });*/
         t(".tags-container").not("disabled").children("input").keyup(function (e) {
             if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
                 return;
@@ -95,14 +111,13 @@
                 let newInput = e.key;
                 const n = t(e.currentTarget);
                 let o = n.val().trim();
+                let inputValue = o;
                 if (o) {
-                    let inputValue = a.sanitizeText(o);
-                    let tagsInputElement = e.currentTarget.parentElement;
-                    a.hideSuggestions();
-                    a.showSuggestions(inputValue, tagsInputElement);
-                } else {
-                    a.hideSuggestions();
+                    inputValue = a.sanitizeText(o);
                 }
+                let tagsInputElement = e.currentTarget.parentElement;
+                a.hideSuggestions();
+                a.showSuggestions(inputValue, tagsInputElement);
             }
         });
         t(".tags-container").not("disabled").children("input").keydown(function (e) {
@@ -115,7 +130,7 @@
                 if (o) {
                     o = a.sanitizeText(o);
                     const e = n.siblings("div").filter(function () {
-                        return t(this).find("span").text() === o
+                        return t(this).find("span").text().toLowerCase() === o.toLowerCase();
                     });
                     if (e.length > 0) i.hasOwnProperty("tagColor") || (i.tagColor = e.css("background-color")), a.blink(e, i.highlightColor, i.tagColor); else {
                         var color = a.defaultLabelColor;
@@ -210,6 +225,7 @@
         e.prototype.closeColorPicker();
     }
     e.prototype.useSuggestedTag = function(event) {
+        event.preventDefault();
         console.log("Suggestion clicked!");
         e.prototype.hideSuggestions();
         let tagValue = event.target.attributes["data-tagvalue"].value;
@@ -257,25 +273,44 @@
         const suggestionDropdownInnerDiv = $('<div style="display: inline-flex; flex-wrap: wrap;"/>');
         suggestionDropdown.append(suggestionDropdownInnerDiv);
 
-        var suggestionItems = [];
-        suggestionItems[suggestionItems.length] = "#FF9988Item1";
-        suggestionItems[suggestionItems.length] = "#339988Item2";
-        suggestionItems[suggestionItems.length] = "#FF2211Item3";
-        suggestionItems[suggestionItems.length] = "#FF5511Item 4 is bigger!";
-        suggestionItems[suggestionItems.length] = "#FF4433Item5";
+        var suggestionItems = this.hints;
 
         var SEARCH_PATTERN = filterString.toLowerCase();
-        var filteredSuggestions = suggestionItems.filter(function (str) { 
-            var label = str;
-            if (label.length > 0 && label.startsWith("#")) {
-                label = label.substring(7);
-            }
-            var matchesWithSuggestions = label.toLowerCase().indexOf(SEARCH_PATTERN) >= 0;
-            // TODO check if this 'str' is not yet part of the input field
-            const activeTags = $(`#${e.prototype.uniqueID}`).prev().val();
-            const notYetUsed = activeTags.toLowerCase().indexOf(str.toLowerCase()) === -1;
-            return matchesWithSuggestions && notYetUsed;
-        });
+        var filteredSuggestions = suggestionItems;
+        if (SEARCH_PATTERN.length > 0) {
+            filteredSuggestions = suggestionItems.filter(function (str) { 
+                var label = str;
+                if (label.length > 0 && label.startsWith("#")) {
+                    label = label.substring(7);
+                }
+                var matchesWithSuggestions = label.toLowerCase().indexOf(SEARCH_PATTERN) >= 0;
+                const activeTags = $(`#${e.prototype.uniqueID}`).prev().val().split(";");
+                const notYetUsed = activeTags.filter(function (existingTag) {
+                    var tagValue = existingTag;
+                    if (tagValue.startsWith("#")) {
+                        tagValue = tagValue.substring(7);
+                    }
+                    return tagValue.toLowerCase().indexOf(label.toLowerCase()) >= 0;
+                }).length == 0;
+                return matchesWithSuggestions && notYetUsed;
+            });
+        } else {
+            filteredSuggestions = suggestionItems.filter(function (str) { 
+                var label = str;
+                if (label.length > 0 && label.startsWith("#")) {
+                    label = label.substring(7);
+                }
+                const activeTags = $(`#${e.prototype.uniqueID}`).prev().val().split(";");
+                const notYetUsed = activeTags.filter(function (existingTag) {
+                    var tagValue = existingTag;
+                    if (tagValue.startsWith("#")) {
+                        tagValue = tagValue.substring(7);
+                    }
+                    return tagValue.toLowerCase().indexOf(label.toLowerCase()) >= 0;
+                }).length == 0;
+                return notYetUsed;
+            });
+        }
 
         for (var i=0; i<filteredSuggestions.length; i++) {
             var color = this.defaultLabelColor;
@@ -308,14 +343,14 @@
         // TODO dropdown to be shown...
     }
     e.prototype.hideSuggestions = function () {
-        var activeSuggestions = $(".tags-input-suggestion-dropdown")
+        var activeSuggestions = $(".tags-input-suggestion-dropdown");
         if (activeSuggestions) {
             activeSuggestions.first().remove();
         }
         return activeSuggestions;
     }
     e.prototype.closeColorPicker = function () {
-        var activeColorPicker = $(".tags-input-color-picker")
+        var activeColorPicker = $(".tags-input-color-picker");
         if (activeColorPicker) {
             activeColorPicker.first().remove();
         }
@@ -439,9 +474,12 @@
     };
     e.prototype.blink = function (e, n, i) {
         const a = t(e);
+        /*
+        // TODO should check why this animation is not working! Reference issue!
         a.stop().animate({backgroundColor: n}, 200).promise().done(function () {
             a.animate({backgroundColor: i}, 200)
-        })
+        });
+        */
     };
     e.prototype.fillIn = function (t, e) {
         return t.replace(new RegExp("{([^{]+)}", "g"), function (t, n) {
