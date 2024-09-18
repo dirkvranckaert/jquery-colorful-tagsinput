@@ -22,16 +22,25 @@
 	min-height: 20px;
     position: absolute;
     display: flex;
+    margin-top: 4px;
     flex-direction: column;
     background: #FFFFFF;
-  	border-radius: 0px;
+  	border-radius: 4px;
+  	padding: 4px 0px 0px 4px !important;
     border: 2px solid;
     border-color: #000000;
-	background-color: #000000;
+	background-color: #ededed;
     padding: 0px;
 	z-index: 1;
-	-webkit-animation: tagsInputFadeIn 500ms;
-	animation: tagsInputFadeIn 500ms;
+}
+
+
+.tags-input-suggestion-tag {
+  	padding: 4px;
+  	margin-right: 4px;
+  	margin-bottom: 4px;
+  	border-radius: 4px;
+  	cursor: pointer;
 }
 
 .tags-input-color-picker {

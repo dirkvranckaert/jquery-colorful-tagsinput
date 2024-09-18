@@ -22,8 +22,12 @@
                 tagClass: a.sanitizeText(i.tagClass),
                 tagRemoveIcon: disabled ? "" : '<i class="tag-remove">&#10006;</i>',
                 tagColorPickerIcon: disabled || !allowColorChange ? "" : '<i class="tag-color-picker" id="tag-color-picker-for-tag-{tagIndex}">&#9207;</i>'
-            })
+            });
         };
+        const f = function() {
+            return "<span class='tags-input-suggestion-tag' style='background-color: {colorValue}; color: {textColorValue};'>{value}</span>";
+            
+        }
         if (i.colorPalette) {
             e.prototype.colorPalette = i.colorPalette;
         } else {
@@ -42,15 +46,17 @@
         } else {
             e.prototype.defaultLabelColor = defaultLabelColor;
         }
+        e.prototype.uniqueID = `${Math.floor(Math.random() * 1000000)}`;
         this.each(function () {
             if (this.hasAttribute("data-rendered")) return;
 
             const e = this.hasAttribute("disabled");
             const n = o(e, i.allowColorChange == undefined ? true : i.allowColorChange);
             const r = function (t) {
-                return a.fillIn('<div class="tags-container {tagsContainerClass} {state}"><input type="text" size="1" {state}><div>', {
+                return a.fillIn('<div class="tags-container {tagsContainerClass} {state}" id="{randomId}"><input type="text" size="1" {state}><div>', {
                     tagsContainerClass: a.sanitizeText(i.tagsContainerClass),
-                    state: t ? "disabled" : ""
+                    state: t ? "disabled" : "",
+                    randomId: a.uniqueID
                 })
             }(e);
             const s = t(this);
@@ -80,6 +86,8 @@
             a.resetSize(this)
         });
         const r = o(this[0].hasAttribute("disabled"), i.allowColorChange == undefined ? true : i.allowColorChange);
+        e.prototype.tagRenderer = r;
+        e.prototype.simpleTagRenderer = f();
         t(".tags-container").not("disabled").children("input").keyup(function (e) {
             if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
                 return;
@@ -92,6 +100,8 @@
                     let tagsInputElement = e.currentTarget.parentElement;
                     a.hideSuggestions();
                     a.showSuggestions(inputValue, tagsInputElement);
+                } else {
+                    a.hideSuggestions();
                 }
             }
         });
@@ -199,6 +209,34 @@
 
         e.prototype.closeColorPicker();
     }
+    e.prototype.useSuggestedTag = function(event) {
+        console.log("Suggestion clicked!");
+        e.prototype.hideSuggestions();
+        let tagValue = event.target.attributes["data-tagvalue"].value;
+
+
+        let n = $(`#${e.prototype.uniqueID} input`);
+
+        var color = e.prototype.defaultLabelColor;
+        var label = tagValue;
+        if (tagValue.length > 0 && tagValue.startsWith("#")) {
+            color = tagValue.substring(0, 7);
+            label = tagValue.substring(7);
+        }
+
+        const textColorValue = _blackOrWhiteContrast(color);
+        const tag = t(e.prototype.tagRenderer.replace("{value}", label).replace("{colorValue}", color).replace("{textColorValue}", textColorValue).replace("{tagIndex}", n.siblings("div").length-1));
+        tag.insertBefore(n);
+        tag.children("i.tag-remove").click(e.prototype.removeTag);
+        tag.children("i.tag-color-picker").click(e.prototype.colorPicker);
+        const i = n.parent().prev();
+        let s = i.val();
+        s.length > 0 && ";" != s.charAt(s.length - 1) && (s += ";"), n.val(""), e.prototype.resetSize(n), i.val(s.concat(tagValue).concat(";"));
+        if (e.prototype.onChange) {
+            e.prototype.onChange(i.val());
+        }
+
+    }
     e.prototype.showSuggestions = function(filterString, inputElement) {
         console.log(`Build suggestions for ${filterString}`);
 
@@ -216,7 +254,50 @@
         console.log("debug");
 
         const suggestionDropdown = $('<div/>');
-        suggestionDropdown.append("<span>TEST</span>");
+        const suggestionDropdownInnerDiv = $('<div style="display: inline-flex; flex-wrap: wrap;"/>');
+        suggestionDropdown.append(suggestionDropdownInnerDiv);
+
+        var suggestionItems = [];
+        suggestionItems[suggestionItems.length] = "#FF9988Item1";
+        suggestionItems[suggestionItems.length] = "#339988Item2";
+        suggestionItems[suggestionItems.length] = "#FF2211Item3";
+        suggestionItems[suggestionItems.length] = "#FF5511Item 4 is bigger!";
+        suggestionItems[suggestionItems.length] = "#FF4433Item5";
+
+        var SEARCH_PATTERN = filterString.toLowerCase();
+        var filteredSuggestions = suggestionItems.filter(function (str) { 
+            var label = str;
+            if (label.length > 0 && label.startsWith("#")) {
+                label = label.substring(7);
+            }
+            var matchesWithSuggestions = label.toLowerCase().indexOf(SEARCH_PATTERN) >= 0;
+            // TODO check if this 'str' is not yet part of the input field
+            const activeTags = $(`#${e.prototype.uniqueID}`).prev().val();
+            const notYetUsed = activeTags.toLowerCase().indexOf(str.toLowerCase()) === -1;
+            return matchesWithSuggestions && notYetUsed;
+        });
+
+        for (var i=0; i<filteredSuggestions.length; i++) {
+            var color = this.defaultLabelColor;
+            var label = filteredSuggestions[i];
+            if (label.length > 0 && label.startsWith("#")) {
+                color = filteredSuggestions[i].substring(0, 7);
+                label = filteredSuggestions[i].substring(7);
+            }
+
+            const textColorValue = _blackOrWhiteContrast(color);
+            const e = $(this.simpleTagRenderer.replace("{value}", label).replace("{colorValue}", color).replace("{textColorValue}", textColorValue).replace("{tagIndex}", i));
+            e.attr('data-tagvalue', filteredSuggestions[i]);
+            e.click(this.useSuggestedTag);
+            
+            //suggestionDropdown.append("<div class='tags-input-suggestion-tag-line'><span class='tags-input-suggestion-tag' style='background-color: #FF2211;'>" + suggestionItems[i] + "</span></div>");
+            suggestionDropdownInnerDiv.append(e);
+        }
+
+        if (filteredSuggestions.length == 0) {
+            this.hideSuggestions();
+            return;
+        }
 
         suggestionDropdown.attr('class', 'tags-input-suggestion-dropdown');
         suggestionDropdown.css("left",offsetLeft);
