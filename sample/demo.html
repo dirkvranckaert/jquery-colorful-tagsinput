@@ -62,6 +62,8 @@
 				<li><code>defaultLabelColor</code>: The default color of a newly added label or of a label without color.</li>
 				<li><code>allowColorChange</code>: <code>true|false</code> indicating if the color-change caret should be available or not.</li>
 				<li><code>hints</code>: <code>String[]</code> containing the hints will be shown with their color (if they have one, otherwise the default color from <code>defaultLabelColor</code>) from which you can select one to easily add to your tags.</li>
+				<li><code>maxHints</code>: <code>integer</code> defining how many hints will be shown at maximum. Default is set to <code>5</code></li>
+				<li><code>hintsMaxWidth</code>: <code>integer (pixels)</code> defining the maximum width of the hints dropdown. If the matching input field is smaller then the dropdown will take the width of the input. Default is set to <code>300</code></li>
 				<li><code>disabled</code>: Adding the attribute to the form control disables the entire tag input (read-only mode).</li>
 			</ul>
 		</div>
@@ -76,7 +78,8 @@
     	});
     	var fixedColorsTagsInput = $('#autocomplete-colors-tags').tagsInput();
     	var tagsInput = $('#tags').tagsInput({
-    		hints: ["TEST12", "BLA456", "#FF8899Colorfull"],
+    		hints: ["TEST12", "BLA456", "#FF8899Colorfull", "Number four", "Number five", "Number six", "Number seven", "Number eight"],
+    		maxHints: 3,
 			onChange: function(e) {
 				console.log(`Tags input changed to ${e}`);
 			}

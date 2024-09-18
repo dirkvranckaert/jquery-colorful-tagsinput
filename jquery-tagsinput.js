@@ -46,6 +46,16 @@
         } else {
             e.prototype.hints = [0];
         } 
+        if (i.maxHints) {
+            e.prototype.maxHints = i.maxHints;
+        } else {
+            e.prototype.maxHints = 5;
+        } 
+        if (i.hintsMaxWidth) {
+            e.prototype.hintsMaxWidth = i.hintsMaxWidth;
+        } else {
+            e.prototype.hintsMaxWidth = 300;
+        } 
         if (i.defaultLabelColor) {
             e.prototype.defaultLabelColor = i.defaultLabelColor;
         } else {
@@ -261,13 +271,11 @@
         const offsetWidth = inputElement.offsetWidth;
         const offsetHeight = inputElement.offsetHeight;
 
-        let dropdownWidth = 200; // TODO make this configurable?
+        let dropdownWidth = this.hintsMaxWidth;
         if (offsetWidth < dropdownWidth) {
             // Make sure we don't go bigger than the 'parent'
             dropdownWidth = offsetWidth;
         }
-
-        console.log("debug");
 
         const suggestionDropdown = $('<div/>');
         const suggestionDropdownInnerDiv = $('<div style="display: inline-flex; flex-wrap: wrap;"/>');
@@ -310,6 +318,10 @@
                 }).length == 0;
                 return notYetUsed;
             });
+        }
+
+        if (filteredSuggestions.length > this.maxHints) {
+            filteredSuggestions = filteredSuggestions.slice(0, this.maxHints);
         }
 
         for (var i=0; i<filteredSuggestions.length; i++) {
