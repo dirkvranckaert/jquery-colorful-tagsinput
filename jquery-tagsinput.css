@@ -36,11 +36,11 @@
 
 
 .tags-input-suggestion-tag {
-  	padding: 4px;
   	margin-right: 4px;
   	margin-bottom: 4px;
   	border-radius: 4px;
   	cursor: pointer;
+	font-size: 85%;
 }
 
 .tags-input-color-picker {
@@ -127,4 +127,3 @@
 	from {opacity: 0;}
 	to {opacity:1 ;}
 }
-

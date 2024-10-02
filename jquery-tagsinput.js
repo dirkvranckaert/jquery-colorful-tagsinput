@@ -25,7 +25,7 @@
             });
         };
         const f = function() {
-            return "<span class='tags-input-suggestion-tag' style='background-color: {colorValue}; color: {textColorValue};'>{value}</span>";
+            return "<span class='badge tags-input-suggestion-tag' style='background-color: {colorValue}; color: {textColorValue};'>{value}</span>";
             
         }
         if (i.colorPalette) {
@@ -115,7 +115,7 @@
             }
         });*/
         t(".tags-container").not("disabled").children("input").keyup(function (e) {
-            if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
+            if ("Escape" == e.key || "Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
                 return;
             } else {
                 let newInput = e.key;
@@ -132,7 +132,10 @@
         });
         t(".tags-container").not("disabled").children("input").keydown(function (e) {
             a.closeColorPicker();
-            if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
+            if ("Escape" == e.key) {
+                e.preventDefault();
+                a.hideSuggestions();
+            } else if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
                 e.preventDefault();
                 a.hideSuggestions();
                 const n = t(e.currentTarget);
@@ -266,8 +269,11 @@
     e.prototype.showSuggestions = function(filterString, inputElement) {
         console.log(`Build suggestions for ${filterString}`);
 
-        const offsetLeft = inputElement.offsetLeft;
-        const offsetTop = inputElement.offsetTop;
+        const element = document.getElementById(inputElement.id);
+        const rect = element.getBoundingClientRect();
+
+        const offsetLeft = rect.x;
+        const offsetTop = rect.y;
         const offsetWidth = inputElement.offsetWidth;
         const offsetHeight = inputElement.offsetHeight;
 
@@ -369,6 +375,8 @@
         return activeColorPicker;
     }
     e.prototype.colorPicker = function (event) {
+        e.prototype.hideSuggestions();
+
         const tagValue = t(this).parent().children().filter(function () {
             return t(this)[0].nodeName === "SPAN"
         }).first().text();
