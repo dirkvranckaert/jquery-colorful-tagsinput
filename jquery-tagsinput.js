@@ -9,11 +9,14 @@
 
     function e() {
     }
-    
+
     $(document).on('click', function(event) {
         if (!$(event.target).closest('.tags-input-suggestion-dropdown').length) {
             e.prototype.hideSuggestions();
         }
+        /*if (!$(event.target).closest('.tags-input-color-picker').length) {
+            e.prototype.closeColorPicker();
+        }*/
     });
 
     t.fn.tagsInput = function (n) {
@@ -183,6 +186,9 @@
         n.attr("size", i < 1 ? 1 : i)
     };
     e.prototype.removeTag = function (event) {
+        e.prototype.closeColorPicker();
+        e.prototype.hideSuggestions();
+
         const n = t(this);
         const i = n.parent();
         const a = i.parent().prev();
