@@ -30,7 +30,7 @@
             return a.fillIn('<div class="tag {tagClass}" style="background-color: {colorValue}; color: {textColorValue};">{tagColorPickerIcon}<span>{value}</span>{tagRemoveIcon}</div>', {
                 tagClass: a.sanitizeText(i.tagClass),
                 tagRemoveIcon: disabled ? "" : '<i class="tag-remove">&#10006;</i>',
-                tagColorPickerIcon: disabled || !allowColorChange ? "" : '<i class="tag-color-picker" id="tag-color-picker-for-tag-{tagIndex}">&#9207;</i>'
+                tagColorPickerIcon: disabled || !allowColorChange ? "" : '<i class="tag-color-picker" id="tag-color-picker-for-tag-{tagIndex}">&#9662;</i>'
             });
         };
         const f = function() {
