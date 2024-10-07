@@ -11,12 +11,12 @@
     }
 
     $(document).on('click', function(event) {
+        if (!$(event.target).closest('.tags-input-color-picker').length && !$(event.target).closest('.tag-color-picker').length) {
+            e.prototype.closeColorPicker();
+        }
         if (!$(event.target).closest('.tags-input-suggestion-dropdown').length) {
             e.prototype.hideSuggestions();
         }
-        /*if (!$(event.target).closest('.tags-input-color-picker').length) {
-            e.prototype.closeColorPicker();
-        }*/
     });
 
     t.fn.tagsInput = function (n) {
