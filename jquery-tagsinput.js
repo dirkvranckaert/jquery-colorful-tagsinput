@@ -141,7 +141,14 @@
         });
         t(".tags-container").not("disabled").children("input").keydown(function (e) {
             a.closeColorPicker();
-            if ("Escape" == e.key) {
+            if ("Backspace" == e.key) {
+                const n = t(e.currentTarget);
+                let o = n.val();
+                if (o.length == 0) {
+                    console.log("Delete last tag");
+                    a.removeLastTag(e);
+                }
+            } else if ("Escape" == e.key) {
                 e.preventDefault();
                 a.hideSuggestions();
             } else if ("Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
@@ -185,22 +192,47 @@
         const n = t(e), i = n.val().length;
         n.attr("size", i < 1 ? 1 : i)
     };
-    e.prototype.removeTag = function (event) {
+    e.prototype.removeLastTag = function (event) {
         e.prototype.closeColorPicker();
         e.prototype.hideSuggestions();
 
+        const y = t(event.currentTarget);
+        const x = y.parent().prev().val();
+        if (x.length > 0 && x.split(";").length > 0) {
+
+            const c = y.parent();
+            const z = c.children().filter(function (child) {
+                return $(this).hasClass("badge");
+            }).last();
+            const n = z.children().last();
+            e.prototype.removeTagInternal(event, n);
+        }
+    }
+    e.prototype.removeTag = function (event) {
         const n = t(this);
+        e.prototype.removeTagInternal(event, n);
+    };
+    e.prototype.removeTagInternal = function (event, n) {
+        e.prototype.closeColorPicker();
+        e.prototype.hideSuggestions();
+
         const i = n.parent();
         const a = i.parent().prev();
-        const o = n.siblings("span").text();
-        const r = `(^(\#[A-Fa-f0-9]{6}){0,1}${o};)|(;(\#[A-Fa-f0-9]{6}){0,1}${o};)`;
-        const s = a.val().replace(new RegExp(r, "u"), ";");
+        const o = _escapeRegex(n.siblings("span").text());
+        const r = `(^(\#[A-Fa-f0-9]{6}){0,1}${o}(;){0,1})|(;(\#[A-Fa-f0-9]{6}){0,1}${o}(;){0,1})`;
+        let s = a.val().replace(new RegExp(r, "u"), ";");
+        if (s.startsWith(";")) {
+            s = s.substring(1);
+        }
+        if (s.endsWith(";")) {
+            s = s.substring(0, s.length - 1);
+        }
         a.val(s);
         i.remove();
         if (e.prototype.onChange) {
             e.prototype.onChange(a.val());
         }
-    };
+    }
     e.prototype.colorPickerColorSelected = function (event) {
         const backgroundColor = $(this).css('backgroundColor');
         const originalHexColor = $(this).parent().parent().attr('data-tagcolor');
@@ -602,4 +634,8 @@ function renderColorfullBootstrapTag(tagConfig) {
 
     }
     return `<span class="badge badge-secondary" style="background-color: ${color}; color: ${textColor};">${tag}</span>`;
+}
+
+function _escapeRegex(string) {
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
