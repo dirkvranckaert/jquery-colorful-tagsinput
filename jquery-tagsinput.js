@@ -14,7 +14,8 @@
         if (!$(event.target).closest('.tags-input-color-picker').length && !$(event.target).closest('.tag-color-picker').length) {
             e.prototype.closeColorPicker();
         }
-        if (!$(event.target).closest('.tags-input-suggestion-dropdown').length) {
+        if (!$(event.target).closest('.tags-input-suggestion-dropdown').length
+            && !$(event.target).closest('.tags-container').length) {
             e.prototype.hideSuggestions();
         }
     });
@@ -53,7 +54,7 @@
         if (i.hints) {
             e.prototype.hints = i.hints;
         } else {
-            e.prototype.hints = [0];
+            e.prototype.hints = [];
         } 
         if (i.maxHints) {
             e.prototype.maxHints = i.maxHints;
@@ -112,17 +113,16 @@
         const r = o(this[0].hasAttribute("disabled"), i.allowColorChange == undefined ? true : i.allowColorChange);
         e.prototype.tagRenderer = r;
         e.prototype.simpleTagRenderer = f();
-        /*t(".tags-container").not("disabled").children("input").focus(function (e) {
+        t(".tags-container").not("disabled").children("input").focus(function (e) {
             e.preventDefault();
             var activeSuggestions = $(".tags-input-suggestion-dropdown")
             if (!activeSuggestions || activeSuggestions.length == 0) {
                 let tagsInputElement = e.currentTarget.parentElement;
                 const n = t(e.currentTarget);
                 let o = n.val().trim();
-                a.hideSuggestions();
                 a.showSuggestions(o, tagsInputElement);
             }
-        });*/
+        });
         t(".tags-container").not("disabled").children("input").keyup(function (e) {
             if ("Escape" == e.key || "Enter" === e.key || "Tab" === e.key || ";" === e.key || "," === e.key) {
                 return;
@@ -135,7 +135,6 @@
                     inputValue = a.sanitizeText(o);
                 }
                 let tagsInputElement = e.currentTarget.parentElement;
-                a.hideSuggestions();
                 a.showSuggestions(inputValue, tagsInputElement);
             }
         });
@@ -311,13 +310,22 @@
 
     }
     e.prototype.showSuggestions = function(filterString, inputElement) {
+        e.prototype.closeColorPicker();
+
+        if (!filterString) {
+            filterString = "";
+        }
+
         console.log(`Build suggestions for ${filterString}`);
 
-        const element = document.getElementById(inputElement.id);
-        const rect = element.getBoundingClientRect();
+        const activeDropdown = $(".tags-input-suggestion-dropdown");
+        const elementPosition = t(inputElement).offset();
 
-        const offsetLeft = rect.x;
-        const offsetTop = rect.y;
+        const windowHeight = $( window ).height();
+        const documentHeight = $( document ).height();
+
+        const offsetLeft = elementPosition.left;
+        const offsetTop = elementPosition.top;
         const offsetWidth = inputElement.offsetWidth;
         const offsetHeight = inputElement.offsetHeight;
 
@@ -397,12 +405,21 @@
         }
 
         suggestionDropdown.attr('class', 'tags-input-suggestion-dropdown');
+        if (!activeDropdown || activeDropdown.length == 0) {
+            suggestionDropdown.addClass("fade-in");
+        }
         suggestionDropdown.css("left",offsetLeft);
-        suggestionDropdown.css("top",offsetTop + offsetHeight);
         suggestionDropdown.css("width",dropdownWidth);
+        this.hideSuggestions();
         suggestionDropdown.appendTo('body');
-
-        // TODO dropdown to be shown...
+        const dropdownHeight = $(suggestionDropdown).outerHeight();
+        if (offsetTop + offsetHeight + dropdownHeight > documentHeight) {
+            // Show above
+            suggestionDropdown.css("top", offsetTop - dropdownHeight);
+            suggestionDropdown.addClass("above");
+        } else {
+            suggestionDropdown.css("top",offsetTop + offsetHeight);
+        }
     }
     e.prototype.hideSuggestions = function () {
         var activeSuggestions = $(".tags-input-suggestion-dropdown");
@@ -419,6 +436,8 @@
         return activeColorPicker;
     }
     e.prototype.colorPicker = function (event) {
+        event.stopPropagation();
+
         e.prototype.hideSuggestions();
 
         const tagValue = t(this).parent().children().filter(function () {

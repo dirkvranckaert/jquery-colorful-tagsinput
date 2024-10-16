@@ -15,22 +15,24 @@
 
 <body>
 	<div class="container">
-		<div class="row">
-			<span>
-				This is a modified version of the <a href="https://github.com/khenfei/jquery-tagsinput" target="_blank">JQuery-TagsInput library</a>.
-			</span>
+		<div class="row" style="margin-bottom: 10px;">
+			<div class="col-sm-12">
+				<h1><a href="../index.html">◀︎</a> JQuery-Colorful-TagsInput library - Demo 3</h1>
+			</div>
 		</div>
 
-		<div class="row" style="margin-bottom: 6px; margin-top: 6px; width: 400px;">
-			<input type="text" class="form-control" id="tags" value="Tag without color;#000000Black Label (custom color);#eee600Yellow Label;#dc143cRed Label"></input>
+		<div class="row" style="margin-bottom: 6px; margin-top: 6px;">
+			<div class="col-sm-12">
+				<input type="text" class="form-control" id="tags" value="Tag without color;#000000Black Label (custom color);#eee600Yellow Label;#dc143cRed Label"></input>
+			</div>
 		</div>
 	</div>
 </body>
 
 <script>
     $(document).ready(function() {
-    	var tagsInput = $('#tags').tagsInput({
-    		hints: ["TEST12", "BLA456", "#FF8899Colorfull", "Number four", "Number five", "Number six", "Number seven", "Number eight"],
+    	$('#tags').tagsInput({
+    		hints: ["#dc143cOption 1", "#000000Option 2", "#FF8899Colorfull", "Number #4", "Number #5", "Number #6", "Number #7", "Number #8"],
     		maxHints: 3,
 			onChange: function(e) {
 				console.log(`Tags input changed to ${e}`);

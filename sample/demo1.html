@@ -17,21 +17,22 @@
 	<div class="container">
 		<div class="row" style="margin-bottom: 10px;">
 			<div class="col-sm-12">
-				<h1><a href="../index.html">◀︎</a> JQuery-Colorful-TagsInput library - Demo 1</h1>
+				<h1><a href="../index.html">◀︎</a> JQuery-Colorful-TagsInput library - Demo 2</h1>
 			</div>
 		</div>
 
+
 		<div class="row" style="margin-bottom: 6px; margin-top: 6px;">
-			<div class="col-sm-12">
-				<input style="width: 200px;" type="text" class="form-control" id="tags" value="#dc143cOption 1;#000000Option 2;"></input>
-			</div>
+			<input type="text" class="form-control" id="tags" value="#dc143cColor change;#000000not allowed;"></input>
 		</div>
 	</div>
 </body>
 
 <script>
     $(document).ready(function() {
-    	$('#tags').tagsInput();
+    	$('#tags').tagsInput({
+    		allowColorChange: false,
+    	});
     });
 </script>
 

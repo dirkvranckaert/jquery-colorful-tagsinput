@@ -1,0 +1,100 @@
+<html>
+
+<head>
+
+	<!-- JQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+
+	<!-- Bootstrap core CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+	
+	<link href="../jquery-tagsinput.css" rel="stylesheet" type="text/css" />
+	<script src="../jquery-tagsinput.js" defer></script>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row" style="margin-bottom: 10px;">
+			<div class="col-sm-12">
+				<h1>JQuery-Colorful-TagsInput library</h1>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<div class="col-sm-12">
+				This is a modified version of the <a href="https://github.com/khenfei/jquery-tagsinput" target="_blank">JQuery-TagsInput library</a>.
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<div class="col-sm-12">
+				<h2>Demos</h2>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<div class="col-sm-4">
+				<a href="sample/demo.html">▶︎ Demo 1 - Default (no options)</a>
+			</div>
+			<div class="col-sm-4">
+				<a href="sample/demo1.html">▶︎ Demo 2 - No color change possible</a>
+			</div>
+			<div class="col-sm-4">
+				<a href="sample/demo2.html">▶︎ Demo 3 - Hints / AutoComplete</a>
+			</div>
+			<div class="col-sm-4">
+				<a href="sample/demo3.html">▶︎ Demo 4 - Disabled state</a>
+			</div>
+			<div class="col-sm-4">
+				<a href="sample/demo4.html">▶︎ Demo 5 - Tags-input in scrolling page</a>
+			</div>
+			<div class="col-sm-4">
+				<a href="sample/demo5.html">▶︎ Demo 6 - Dropdown above input</a>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<div class="col-sm-12">
+				<h2>Documentation</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<span>Usage is really simple! Just add an 'input' field to your UI next apply in JavaScript the 'tagsInput' plugin. You can use whatever JQuery selector to select to which input field to apply the tags!</span>
+				<pre><code>
+		$(document).ready(function() {
+			$('#tags').tagsInput({
+
+			});
+		});
+				</code></pre>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<span>
+					Tags can be either plan text, the entire input string is then something like: <code>tag1;tag2;tag3;</code>. <br/>
+					But tags can also start with a color definition, eg: <code>#FF4422tag1;#553311tag2;#22FF54tag3;</code> or a combination: <code>#FF4422tag1;tag2;tag3;</code>. If no color is specified the default color will be used that is specified to the 'tagsInput'-options, or if non is specified it will be <code style="color: #36454f">#36454f</code>.
+				</span>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<span>Following options are available:</span>
+				<ul>
+					<li><code>onChange</code>: A method that will be triggered upon every change (add, remove, color change) of any tag. It submits the entire form-input-value after the change is applied.</li>
+					<li><code>defaultLabelColor</code>: The default color of a newly added label or of a label without color.</li>
+					<li><code>allowColorChange</code>: <code>true|false</code> indicating if the color-change caret should be available or not.</li>
+					<li><code>hints</code>: <code>String[]</code> containing the hints will be shown with their color (if they have one, otherwise the default color from <code>defaultLabelColor</code>) from which you can select one to easily add to your tags.</li>
+					<li><code>maxHints</code>: <code>integer</code> defining how many hints will be shown at maximum. Default is set to <code>5</code></li>
+					<li><code>hintsMaxWidth</code>: <code>integer (pixels)</code> defining the maximum width of the hints dropdown. If the matching input field is smaller then the dropdown will take the width of the input. Default is set to <code>300</code></li>
+					<li><code>disabled</code>: Adding the attribute to the form control disables the entire tag input (read-only mode).</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script>
+</script>
+
+</html>

@@ -34,6 +34,9 @@
 	z-index: 1;
 }
 
+.tags-input-suggestion-dropdown.above {
+    margin-top: -4px;
+}
 
 .tags-input-suggestion-tag {
   	margin-right: 4px;
@@ -54,6 +57,11 @@
 	background-color: #000000;
     padding: 0px;
 	z-index: 1;
+	-webkit-animation: tagsInputFadeIn 500ms;
+	animation: tagsInputFadeIn 500ms;
+}
+
+.fade-in {
 	-webkit-animation: tagsInputFadeIn 500ms;
 	animation: tagsInputFadeIn 500ms;
 }

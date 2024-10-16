@@ -1,0 +1,103 @@
+<html>
+
+<head>
+
+	<!-- JQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+
+	<!-- Bootstrap core CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+	
+	<link href="../jquery-tagsinput.css" rel="stylesheet" type="text/css" />
+	<script src="../jquery-tagsinput.js" defer></script>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row" style="margin-bottom: 10px;">
+			<div class="col-sm-12">
+				<h1><a href="../index.html">◀︎</a> JQuery-Colorful-TagsInput library - Demo 5</h1>
+			</div>
+		</div>
+
+		<div class="row" style="margin-bottom: 6px; margin-top: 6px;">
+			<div class="col-sm-4">
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+				▼</br>
+			</div>
+		</div>
+
+		<div class="row" style="margin-bottom: 6px; margin-top: 6px;">
+			<div class="col-sm-4">
+				<input type="text" class="form-control" id="tags" value="#FF8899Default Label;"></input>
+			</div>
+		</div>
+
+		<div class="row" style="margin-bottom: 6px; margin-top: 6px;">
+			<div class="col-sm-4">
+				▲</br>
+				▲</br>
+				▲</br>
+				▲</br>
+				▲</br>
+				▲</br>
+				▲</br>
+				▲</br>
+				▲</br>
+				▲</br>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script>
+    $(document).ready(function() {
+    	$('#tags').tagsInput({
+    		hints: ["#dc143cOption 1", "#000000Option 2", "#FF8899Colorfull", "Number #4", "Number #5", "Number #6", "Number #7", "Number #8"]
+		});
+    });
+</script>
+
+</html>
