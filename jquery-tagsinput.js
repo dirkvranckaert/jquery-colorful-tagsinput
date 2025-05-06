@@ -219,7 +219,8 @@
         const a = i.parent().prev();
         const o = _escapeRegex(n.siblings("span").text());
         const r = `(^(\#[A-Fa-f0-9]{6}){0,1}${o}(;){0,1})|(;(\#[A-Fa-f0-9]{6}){0,1}${o}(;){0,1})`;
-        let s = a.val().replace(new RegExp(r, "u"), ";");
+        let regExp = new RegExp(r, "u");
+        let s = a.val().replace(regExp, ";");
         if (s.startsWith(";")) {
             s = s.substring(1);
         }
@@ -641,6 +642,12 @@ function _blackOrWhiteContrast(color) {
     return constastColor;
 }
 
+function renderColorfullBootstrapTags(tags) {
+    return tags.split(';').map(function(tagConfig) {
+        return renderColorfullBootstrapTag(tagConfig);
+    }).join("  ");
+}
+
 function renderColorfullBootstrapTag(tagConfig) {
     if (tagConfig.startsWith("#")) {
         color = tagConfig.substring(0, 7);
@@ -656,5 +663,5 @@ function renderColorfullBootstrapTag(tagConfig) {
 }
 
 function _escapeRegex(string) {
-    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+    return string.replace(/[/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
